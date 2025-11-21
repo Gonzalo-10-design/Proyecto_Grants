@@ -119,11 +119,23 @@ for i, post in enumerate(cleaned_posts, start=1):
     enlace_post = post.get("url") or "Enlace no disponible"
 
     prompt = f"""
-    Analiza el siguiente texto publicado en LinkedIn y determina si corresponde a una convocatoria o fondo de financiamiento
-    para investigación, innovación o emprendimiento. Si es así, devuelve EXCLUSIVAMENTE un JSON válido con la siguiente estructura:
+    Analiza el siguiente texto publicado en LinkedIn. Tu objetivo es determinar si corresponde a:
+    - una convocatoria,
+    - un fondo de financiamiento,
+    - una subvención,
+    - un grant de investigación, innovación o emprendimiento,
+    - una ayuda económica o programa que entregue recursos.
+
+    Si NO corresponde claramente a algún tipo de financiamiento o apoyo económico, responde SOLO:
 
     {{
-      "es_financiamiento": true/false,
+      "es_financiamiento": false
+    }}
+
+    Si SÍ corresponde a financiamiento, devuelve EXCLUSIVAMENTE un JSON válido con esta estructura:
+
+    {{
+      "es_financiamiento": true,
       "nombre_convocatoria": "",
       "entidad_proponente": "",
       "monto": "",
@@ -138,20 +150,34 @@ for i, post in enumerate(cleaned_posts, start=1):
       "resumen": ""
     }}
 
-    Instrucciones adicionales:
-    1. Usa la información disponible en el texto o dedúcela lógicamente.
-    2. Si el post parece provenir de una organización y no menciona explícitamente la entidad proponente,
-       utiliza el autor del post como "entidad_proponente": "{autor}".
-    3. Si no hay fechas explícitas de apertura o cierre, déjalas vacías, pero intenta inferir la "fecha de publicación"
-       usando el campo timeSincePosted="{post.get("timeSincePosted")}" (en formato inglés, por ejemplo: "7h", "2w", "1mo"),
-       tomando como referencia la fecha actual {datetime.utcnow().date()}.
-    4. El campo "enlaces" debe incluir al menos este enlace al post original: "{enlace_post}".
-    5. Resume el contenido principal en español, en máximo 30 palabras.
-    6. No incluyas texto adicional fuera del JSON.
+    INSTRUCCIONES IMPORTANTES:
+    1. Identifica si el texto contiene señales claras de financiamiento: "convocatoria", "grant", "funding", "apply", 
+       "call for proposals", "subvención", "financiación", "deadline", montos, elegibilidad, o términos similares.
 
-    Texto del post:
+    2. Acepta montos expresados en:
+       - dólares (USD),
+       - euros (EUR / €),
+       - pesos colombianos (COP).
+       Si el texto menciona un monto con cualquiera de estas monedas, extrae esa información.
+
+    3. Si no se encuentra explícitamente la entidad proponente, usa el autor del post como entidad_proponente: "{autor}".
+
+    4. Si no hay fechas explícitas de apertura o cierre, déjalas vacías,
+       pero intenta inferir la fecha de publicación usando timeSincePosted="{post.get("timeSincePosted")}"
+       tomando como referencia la fecha actual {datetime.utcnow().date()}.
+
+    5. El campo "enlaces" debe incluir al menos el enlace al post original: "{enlace_post}".
+
+    6. Resume el contenido principal en español en máximo 30 palabras.
+
+    7. En los campos sin información disponible, deja una cadena vacía "" o un arreglo vacío [] según corresponda.
+
+    8. No incluyas absolutamente nada fuera del JSON.
+
+    TEXTO DEL POST:
     {text}
     """
+
 
     try:
         response = openai_client.chat.completions.create(

@@ -7,24 +7,37 @@ function Convocatorias() {
   const [selectedConvocatoria, setSelectedConvocatoria] = useState(null);
 
   useEffect(() => {
-    // Función para obtener las convocatorias del backend
-    const fetchConvocatorias = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/convocatorias');
-        if (!response.ok) {
-          throw new Error('Error al cargar las convocatorias');
-        }
-        const data = await response.json();
-        setConvocatorias(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
     fetchConvocatorias();
   }, []);
+
+  const fetchConvocatorias = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      
+      const response = await fetch('http://localhost:5000/api/convocatorias', {
+        headers: {
+          'Authorization': token
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('username');
+          window.location.reload();
+          return;
+        }
+        throw new Error('Error al cargar las convocatorias');
+      }
+
+      const data = await response.json();
+      setConvocatorias(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
   const handleVerDetalle = (conv) => {
     setSelectedConvocatoria(conv);
