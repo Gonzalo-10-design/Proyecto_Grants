@@ -89,6 +89,103 @@ def infer_publication_date(time_str):
         return None
     return None
 
+def verificar_duplicado_con_ia(nombre_convocatoria, entidad_proponente, fecha_cierre):
+    """
+    Verifica si una convocatoria ya existe en la base de datos usando OpenAI
+    para comparación semántica.
+    """
+    conn = sqlite3.connect("Base_datos_convocatorias.db")
+    cursor = conn.cursor()
+    
+    # Obtener todas las convocatorias existentes
+    cursor.execute('''
+        SELECT Nombre_Convocatoria, Entidad_Proponente, Fecha_Cierre 
+        FROM Datos
+    ''')
+    convocatorias_existentes = cursor.fetchall()
+    conn.close()
+    
+    if not convocatorias_existentes:
+        return False, None
+    
+    # Preparar datos para comparación con IA
+    prompt = f"""
+    Analiza si la siguiente convocatoria es un DUPLICADO de alguna de las convocatorias existentes en la base de datos.
+    
+    CONVOCATORIA NUEVA:
+    - Nombre: {nombre_convocatoria}
+    - Entidad: {entidad_proponente}
+    - Fecha de cierre: {fecha_cierre}
+    
+    CONVOCATORIAS EXISTENTES:
+    {chr(10).join([f"- Nombre: {c[0]} | Entidad: {c[1]} | Fecha cierre: {c[2]}" for c in convocatorias_existentes[:20]])}
+    
+    CRITERIOS DE DUPLICADO:
+    1. El nombre es muy similar o idéntico (considera variaciones menores, typos, mayúsculas/minúsculas)
+    2. La entidad proponente es la misma o muy similar
+    3. La fecha de cierre es la misma o muy cercana (±7 días)
+    
+    Si encuentras un duplicado CLARO, responde EXCLUSIVAMENTE en este formato JSON:
+    {{
+        "es_duplicado": true,
+        "nombre_duplicado": "nombre exacto de la convocatoria duplicada",
+        "razon": "explicación breve de por qué es duplicado"
+    }}
+    
+    Si NO es un duplicado, responde:
+    {{
+        "es_duplicado": false
+    }}
+    
+    IMPORTANTE: Sé ESTRICTO. Solo marca como duplicado si hay una similitud MUY alta en los 3 criterios.
+    """
+    
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Eres un experto en detectar convocatorias duplicadas. Respondes solo en JSON válido."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0
+        )
+        
+        result_text = response.choices[0].message.content.strip()
+        result = json.loads(result_text)
+        
+        if result.get("es_duplicado"):
+            print(f"⚠️  DUPLICADO DETECTADO: {result.get('razon', 'Sin razón')}")
+            return True, result.get("nombre_duplicado")
+        
+        return False, None
+        
+    except Exception as e:
+        print(f"Error en verificación de duplicados: {e}")
+        # En caso de error, hacer verificación básica
+        return verificar_duplicado_basico(nombre_convocatoria, entidad_proponente)
+
+def verificar_duplicado_basico(nombre_convocatoria, entidad_proponente):
+    """
+    Verificación básica de duplicados (fallback sin IA)
+    """
+    conn = sqlite3.connect("Base_datos_convocatorias.db")
+    cursor = conn.cursor()
+    
+    # Búsqueda exacta
+    cursor.execute('''
+        SELECT Nombre_Convocatoria 
+        FROM Datos 
+        WHERE LOWER(Nombre_Convocatoria) = LOWER(?) 
+        AND LOWER(Entidad_Proponente) = LOWER(?)
+    ''', (nombre_convocatoria, entidad_proponente))
+    
+    resultado = cursor.fetchone()
+    conn.close()
+    
+    if resultado:
+        return True, resultado[0]
+    return False, None
+
 # --- Fase 1: Filtrado local ---
 
 data_sorted = sorted(dataset_items, key=lambda x: parse_date(x) or datetime.min, reverse=True)
@@ -107,6 +204,8 @@ for post in data_sorted:
 # --- Fase 2: Análisis con OpenAI ---
 
 filtered_posts = []
+duplicados_encontrados = 0
+convocatorias_nuevas = 0
 
 for i, post in enumerate(cleaned_posts, start=1):
     text = post.get("text", "")
@@ -221,6 +320,22 @@ for i, post in enumerate(cleaned_posts, start=1):
         result["enlaces"] = result.get("enlaces") or [enlace_post]
         result["resumen"] = result.get("resumen") or "Información no encontrada / Information not found"
 
+        # VERIFICACIÓN DE DUPLICADOS
+        print(f"\n🔍 Verificando duplicado para: {result['nombre_convocatoria']}")
+        es_duplicado, nombre_duplicado = verificar_duplicado_con_ia(
+            result["nombre_convocatoria"],
+            result["entidad_proponente"],
+            result["fechas"]["cierre"]
+        )
+        
+        if es_duplicado:
+            duplicados_encontrados += 1
+            print(f"❌ DUPLICADO DETECTADO - Ya existe: '{nombre_duplicado}'")
+            continue
+        else:
+            print(f"✅ NUEVA CONVOCATORIA - Será agregada")
+            convocatorias_nuevas += 1
+
         post.update(result)
         filtered_posts.append(post)
 
@@ -269,13 +384,21 @@ def almacenar_datos(post):
         print(f"Error al guardar convocatoria '{post.get('nombre_convocatoria', 'Sin nombre')}': {e}")
 
 if filtered_posts:
-    print(f"Guardando {len(filtered_posts)} convocatorias relevantes en la base de datos...")
+    print(f"\n{'='*60}")
+    print(f"📊 RESUMEN DE PROCESAMIENTO:")
+    print(f"{'='*60}")
+    print(f"✅ Convocatorias NUEVAS encontradas: {convocatorias_nuevas}")
+    print(f"❌ Duplicados detectados y omitidos: {duplicados_encontrados}")
+    print(f"💾 Total a guardar en base de datos: {len(filtered_posts)}")
+    print(f"{'='*60}\n")
+    
+    print("Guardando convocatorias en la base de datos...")
     for post in filtered_posts:
         almacenar_datos(post)
-    print("Todas las convocatorias fueron almacenadas correctamente.")
+    print("✅ Todas las convocatorias fueron almacenadas correctamente.")
 else:
-    print("No se encontraron convocatorias relevantes para guardar.")
+    print("\n⚠️  No se encontraron convocatorias nuevas para guardar.")
 
 conn.close()
-print("Conexión a la base de datos cerrada.")
-print(f"Procesamiento finalizado. Se identificaron {len(filtered_posts)} convocatorias relevantes.")
+print("\n🔒 Conexión a la base de datos cerrada.")
+print(f"🎉 Procesamiento finalizado exitosamente.")
