@@ -178,7 +178,6 @@ for i, post in enumerate(cleaned_posts, start=1):
     {text}
     """
 
-
     try:
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
