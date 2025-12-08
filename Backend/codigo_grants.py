@@ -154,7 +154,7 @@ def verificar_duplicado_con_ia(nombre_convocatoria, entidad_proponente, fecha_ci
         result = json.loads(result_text)
         
         if result.get("es_duplicado"):
-            print(f"⚠️  DUPLICADO DETECTADO: {result.get('razon', 'Sin razón')}")
+            print(f"  DUPLICADO DETECTADO: {result.get('razon', 'Sin razón')}")
             return True, result.get("nombre_duplicado")
         
         return False, None
@@ -209,7 +209,7 @@ convocatorias_nuevas = 0
 
 for i, post in enumerate(cleaned_posts, start=1):
     text = post.get("text", "")
-    if not text or len(text.strip()) < 30:
+    if not text or len(text.strip()) < 50:
         print(f"Post #{i} descartado por texto vacío o irrelevante")
         continue
 
@@ -321,7 +321,7 @@ for i, post in enumerate(cleaned_posts, start=1):
         result["resumen"] = result.get("resumen") or "Información no encontrada / Information not found"
 
         # VERIFICACIÓN DE DUPLICADOS
-        print(f"\n🔍 Verificando duplicado para: {result['nombre_convocatoria']}")
+        print(f"\n Verificando duplicado para: {result['nombre_convocatoria']}")
         es_duplicado, nombre_duplicado = verificar_duplicado_con_ia(
             result["nombre_convocatoria"],
             result["entidad_proponente"],
@@ -330,10 +330,10 @@ for i, post in enumerate(cleaned_posts, start=1):
         
         if es_duplicado:
             duplicados_encontrados += 1
-            print(f"❌ DUPLICADO DETECTADO - Ya existe: '{nombre_duplicado}'")
+            print(f" DUPLICADO DETECTADO - Ya existe: '{nombre_duplicado}'")
             continue
         else:
-            print(f"✅ NUEVA CONVOCATORIA - Será agregada")
+            print(f" NUEVA CONVOCATORIA - Será agregada")
             convocatorias_nuevas += 1
 
         post.update(result)
@@ -385,20 +385,20 @@ def almacenar_datos(post):
 
 if filtered_posts:
     print(f"\n{'='*60}")
-    print(f"📊 RESUMEN DE PROCESAMIENTO:")
+    print(f" RESUMEN DE PROCESAMIENTO:")
     print(f"{'='*60}")
-    print(f"✅ Convocatorias NUEVAS encontradas: {convocatorias_nuevas}")
-    print(f"❌ Duplicados detectados y omitidos: {duplicados_encontrados}")
-    print(f"💾 Total a guardar en base de datos: {len(filtered_posts)}")
+    print(f" Convocatorias NUEVAS encontradas: {convocatorias_nuevas}")
+    print(f" Duplicados detectados y omitidos: {duplicados_encontrados}")
+    print(f" Total a guardar en base de datos: {len(filtered_posts)}")
     print(f"{'='*60}\n")
     
     print("Guardando convocatorias en la base de datos...")
     for post in filtered_posts:
         almacenar_datos(post)
-    print("✅ Todas las convocatorias fueron almacenadas correctamente.")
+    print(" Todas las convocatorias fueron almacenadas correctamente.")
 else:
-    print("\n⚠️  No se encontraron convocatorias nuevas para guardar.")
+    print("\n  No se encontraron convocatorias nuevas para guardar.")
 
 conn.close()
-print("\n🔒 Conexión a la base de datos cerrada.")
-print(f"🎉 Procesamiento finalizado exitosamente.")
+print("\n Conexión a la base de datos cerrada.")
+print(f" Procesamiento finalizado exitosamente.")

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Search, Filter, X, ChevronLeft, ChevronRight, ExternalLink, Calendar, MapPin, DollarSign, Building } from 'lucide-react';
 
 function Convocatorias() {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -6,9 +7,13 @@ function Convocatorias() {
   const [error, setError] = useState(null);
   const [selectedConvocatoria, setSelectedConvocatoria] = useState(null);
   
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+  
   // Estados para filtros
   const [filtros, setFiltros] = useState({
-    estado: 'todas', // 'todas', 'activas', 'vencidas', 'sin_informacion'
+    estado: 'todas',
     tema: '',
     busqueda: ''
   });
@@ -20,7 +25,6 @@ function Convocatorias() {
   }, []);
 
   useEffect(() => {
-    // Extraer temas únicos de las convocatorias
     if (convocatorias.length > 0) {
       const temasSet = new Set();
       convocatorias.forEach(conv => {
@@ -67,14 +71,12 @@ function Convocatorias() {
   const determinarEstado = (convocatoria) => {
     const fechaCierre = convocatoria.fecha_cierre;
     
-    // Verificar si es "Sin información"
     if (!fechaCierre || 
         fechaCierre === 'Información no encontrada / Information not found' ||
         fechaCierre.toLowerCase().includes('no encontrada')) {
       return 'sin_informacion';
     }
 
-    // Intentar parsear la fecha
     try {
       const fecha = new Date(fechaCierre);
       const hoy = new Date();
@@ -93,12 +95,10 @@ function Convocatorias() {
   const convocatoriasFiltradas = convocatorias.filter(conv => {
     const estado = determinarEstado(conv);
     
-    // Filtro por estado
     if (filtros.estado !== 'todas' && estado !== filtros.estado) {
       return false;
     }
 
-    // Filtro por tema
     if (filtros.tema) {
       const temasFiltro = filtros.tema.toLowerCase();
       const temasConv = conv.temas.toLowerCase();
@@ -107,7 +107,6 @@ function Convocatorias() {
       }
     }
 
-    // Filtro por búsqueda general
     if (filtros.busqueda) {
       const busqueda = filtros.busqueda.toLowerCase();
       const campos = [
@@ -126,6 +125,17 @@ function Convocatorias() {
     return true;
   });
 
+  // Calcular paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = convocatoriasFiltradas.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(convocatoriasFiltradas.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleVerDetalle = (conv) => {
     setSelectedConvocatoria(conv);
   };
@@ -140,20 +150,24 @@ function Convocatorias() {
       tema: '',
       busqueda: ''
     });
+    setCurrentPage(1);
   };
 
   const getEstadoBadge = (conv) => {
     const estado = determinarEstado(conv);
     
     const badges = {
-      activa: <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-        🟢 Activa
+      activa: <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
+        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+        Activa
       </span>,
-      vencida: <span className="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-        🔴 Vencida
+      vencida: <span className="inline-flex items-center gap-1 bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">
+        <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+        Vencida
       </span>,
-      sin_informacion: <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-        ⚪ Sin información
+      sin_informacion: <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-800 text-xs font-semibold px-3 py-1 rounded-full">
+        <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
+        Sin información
       </span>
     };
     
@@ -162,247 +176,371 @@ function Convocatorias() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-2xl text-[#0f3d28]">Cargando convocatorias...</div>
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#1ea34a] mx-auto mb-4"></div>
+          <div className="text-2xl text-[#0f3d28] font-semibold">Cargando convocatorias...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-2xl text-red-600">Error: {error}</div>
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-8 text-center">
+          <div className="text-2xl text-red-600 font-semibold">Error: {error}</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <section className="container mx-auto px-4 py-8">
-      <h2 className="text-4xl font-bold text-[#0f3d28] mb-8 text-center">
-        Convocatorias Disponibles
-      </h2>
-
-      {/* Panel de Filtros */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-[#0f3d28]">🔍 Filtros de Búsqueda</h3>
-          <button
-            onClick={limpiarFiltros}
-            className="text-sm text-[#1ea34a] hover:underline"
-          >
-            Limpiar filtros
-          </button>
+    <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+      <div className="container mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h2 className="text-5xl font-extrabold text-[#0f3d28] mb-4">
+            Oportunidades de Financiación
+          </h2>
+          <p className="text-xl text-gray-600">
+            Explora convocatorias actualizadas de fuentes globales verificadas
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Filtro por Estado */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Estado de la convocatoria
-            </label>
-            <select
-              value={filtros.estado}
-              onChange={(e) => setFiltros({...filtros, estado: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1ea34a]"
+        {/* Panel de Filtros */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Filter className="text-[#1ea34a]" size={24} />
+              <h3 className="text-xl font-bold text-[#0f3d28]">Filtros de Búsqueda</h3>
+            </div>
+            <button
+              onClick={limpiarFiltros}
+              className="text-sm text-[#1ea34a] hover:text-[#0f3d28] font-medium transition-colors flex items-center gap-1"
             >
-              <option value="todas">Todas</option>
-              <option value="activas">🟢 Activas</option>
-              <option value="vencidas">🔴 Vencidas</option>
-              <option value="sin_informacion">⚪ Sin información</option>
-            </select>
+              <X size={16} />
+              Limpiar filtros
+            </button>
           </div>
 
-          {/* Filtro por Tema */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tema específico
-            </label>
-            <input
-              type="text"
-              list="temas-list"
-              value={filtros.tema}
-              onChange={(e) => setFiltros({...filtros, tema: e.target.value})}
-              placeholder="Ej: tecnología, educación..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1ea34a]"
-            />
-            <datalist id="temas-list">
-              {temasDisponibles.map((tema, idx) => (
-                <option key={idx} value={tema} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Estado de la convocatoria
+              </label>
+              <select
+                value={filtros.estado}
+                onChange={(e) => {
+                  setFiltros({...filtros, estado: e.target.value});
+                  setCurrentPage(1);
+                }}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1ea34a] focus:border-transparent transition-all"
+              >
+                <option value="todas">Todas</option>
+                <option value="activas">🟢 Activas</option>
+                <option value="vencidas">🔴 Vencidas</option>
+                <option value="sin_informacion">⚪ Sin información</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Tema específico
+              </label>
+              <input
+                type="text"
+                list="temas-list"
+                value={filtros.tema}
+                onChange={(e) => {
+                  setFiltros({...filtros, tema: e.target.value});
+                  setCurrentPage(1);
+                }}
+                placeholder="Ej: tecnología, educación..."
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1ea34a] focus:border-transparent transition-all"
+              />
+              <datalist id="temas-list">
+                {temasDisponibles.map((tema, idx) => (
+                  <option key={idx} value={tema} />
+                ))}
+              </datalist>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <Search className="inline mr-1" size={16} />
+                Búsqueda general
+              </label>
+              <input
+                type="text"
+                value={filtros.busqueda}
+                onChange={(e) => {
+                  setFiltros({...filtros, busqueda: e.target.value});
+                  setCurrentPage(1);
+                }}
+                placeholder="Buscar en todos los campos..."
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1ea34a] focus:border-transparent transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="mt-4 text-sm font-medium text-gray-600 bg-gray-50 px-4 py-2 rounded-lg inline-block">
+            Mostrando {currentItems.length} de {convocatoriasFiltradas.length} convocatorias
+          </div>
+        </div>
+
+        {/* Lista de Convocatorias */}
+        {convocatoriasFiltradas.length === 0 ? (
+          <div className="text-center bg-white rounded-2xl shadow-lg p-12 border border-gray-200">
+            <div className="text-6xl mb-4">🔍</div>
+            <div className="text-2xl text-gray-600 font-semibold">
+              {convocatorias.length === 0 
+                ? "No hay convocatorias disponibles en este momento."
+                : "No se encontraron convocatorias con los filtros aplicados."
+              }
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {currentItems.map((conv, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 transform hover:-translate-y-1"
+                >
+                  <div className="bg-gradient-to-r from-[#0f3d28] to-[#1ea34a] text-white p-4">
+                    <h3 className="text-lg font-bold line-clamp-2 mb-2 min-h-[3.5rem]">
+                      {conv.nombre_convocatoria}
+                    </h3>
+                    {getEstadoBadge(conv)}
+                  </div>
+                  
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-start gap-2">
+                      <Building className="text-[#1ea34a] flex-shrink-0 mt-1" size={16} />
+                      <div className="min-h-[2.5rem]">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">Entidad</span>
+                        <p className="text-sm text-gray-700 line-clamp-2">{conv.entidad_proponente}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <MapPin className="text-[#1ea34a] flex-shrink-0 mt-1" size={16} />
+                      <div>
+                        <span className="text-xs font-semibold text-gray-500 uppercase">País</span>
+                        <p className="text-sm text-gray-700">{conv.pais}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <DollarSign className="text-[#1ea34a] flex-shrink-0 mt-1" size={16} />
+                      <div className="min-h-[2.5rem]">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">Monto</span>
+                        <p className="text-sm text-gray-700 line-clamp-2">{conv.monto}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <Calendar className="text-[#1ea34a] flex-shrink-0 mt-1" size={16} />
+                      <div>
+                        <span className="text-xs font-semibold text-gray-500 uppercase">Cierre</span>
+                        <p className="text-sm text-gray-700">{conv.fecha_cierre}</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleVerDetalle(conv)}
+                      className="w-full bg-[#1ea34a] text-white py-2.5 rounded-lg hover:bg-[#0f3d28] transition-colors duration-300 font-semibold text-sm flex items-center justify-center gap-2 mt-4"
+                    >
+                      Ver Detalle
+                      <ExternalLink size={16} />
+                    </button>
+                  </div>
+                </div>
               ))}
-            </datalist>
-          </div>
+            </div>
 
-          {/* Búsqueda general */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Búsqueda general
-            </label>
-            <input
-              type="text"
-              value={filtros.busqueda}
-              onChange={(e) => setFiltros({...filtros, busqueda: e.target.value})}
-              placeholder="Buscar en todos los campos..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1ea34a]"
-            />
-          </div>
-        </div>
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-[#0f3d28] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
+                  <ChevronLeft size={20} />
+                  Anterior
+                </button>
 
-        {/* Contador de resultados */}
-        <div className="mt-4 text-sm text-gray-600">
-          Mostrando {convocatoriasFiltradas.length} de {convocatorias.length} convocatorias
-        </div>
+                <div className="flex gap-2">
+                  {[...Array(totalPages)].map((_, index) => {
+                    const pageNumber = index + 1;
+                    // Mostrar solo algunas páginas
+                    if (
+                      pageNumber === 1 ||
+                      pageNumber === totalPages ||
+                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={pageNumber}
+                          onClick={() => handlePageChange(pageNumber)}
+                          className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                            currentPage === pageNumber
+                              ? 'bg-[#1ea34a] text-white'
+                              : 'bg-white border-2 border-gray-200 text-[#0f3d28] hover:bg-gray-50'
+                          }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      );
+                    } else if (
+                      pageNumber === currentPage - 2 ||
+                      pageNumber === currentPage + 2
+                    ) {
+                      return <span key={pageNumber} className="px-2 py-2">...</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-[#0f3d28] font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
+                  Siguiente
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Modal de detalle */}
+        {selectedConvocatoria && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp">
+              <div className="sticky top-0 bg-gradient-to-r from-[#0f3d28] to-[#1ea34a] text-white p-6 z-10 rounded-t-2xl">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 pr-4">
+                    <h3 className="text-3xl font-bold mb-3">
+                      {selectedConvocatoria.nombre_convocatoria}
+                    </h3>
+                    {getEstadoBadge(selectedConvocatoria)}
+                  </div>
+                  <button
+                    onClick={handleCerrarDetalle}
+                    className="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-colors"
+                  >
+                    <X size={28} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-8 space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
+                    <h4 className="font-bold text-[#0f3d28] text-sm uppercase mb-2 flex items-center gap-2">
+                      <Building size={16} />
+                      Entidad Proponente
+                    </h4>
+                    <p className="text-gray-700">{selectedConvocatoria.entidad_proponente}</p>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
+                    <h4 className="font-bold text-[#0f3d28] text-sm uppercase mb-2 flex items-center gap-2">
+                      <DollarSign size={16} />
+                      Monto
+                    </h4>
+                    <p className="text-gray-700">{selectedConvocatoria.monto}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-bold text-[#0f3d28] text-xs uppercase mb-2">Apertura</h4>
+                    <p className="text-gray-700">{selectedConvocatoria.fecha_apertura}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-bold text-[#0f3d28] text-xs uppercase mb-2">Cierre</h4>
+                    <p className="text-gray-700">{selectedConvocatoria.fecha_cierre}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-bold text-[#0f3d28] text-xs uppercase mb-2">Publicación</h4>
+                    <p className="text-gray-700">{selectedConvocatoria.fecha_publicacion}</p>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
+                  <h4 className="font-bold text-[#0f3d28] text-sm uppercase mb-2 flex items-center gap-2">
+                    <MapPin size={16} />
+                    País
+                  </h4>
+                  <p className="text-gray-700">{selectedConvocatoria.pais}</p>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-[#0f3d28] text-lg mb-3">Temas</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedConvocatoria.temas.split(',').map((tema, idx) => (
+                      <span key={idx} className="bg-gradient-to-r from-[#1ea34a] to-[#0f3d28] text-white px-4 py-2 rounded-full text-sm font-medium">
+                        {tema.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="font-bold text-[#0f3d28] text-lg mb-3">Resumen</h4>
+                  <p className="text-gray-700 leading-relaxed">{selectedConvocatoria.resumen}</p>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-[#0f3d28] text-lg mb-3">Enlaces</h4>
+                  <div className="space-y-2">
+                    {selectedConvocatoria.enlaces.split(', ').map((enlace, idx) => (
+                      <a
+                        key={idx}
+                        href={enlace}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-[#1ea34a] hover:text-[#0f3d28] hover:underline break-all bg-gray-50 p-3 rounded-lg transition-colors"
+                      >
+                        <ExternalLink size={16} className="flex-shrink-0" />
+                        {enlace}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Lista de Convocatorias */}
-      {convocatoriasFiltradas.length === 0 ? (
-        <div className="text-center text-xl text-gray-600 py-12">
-          {convocatorias.length === 0 
-            ? "No hay convocatorias disponibles en este momento."
-            : "No se encontraron convocatorias con los filtros aplicados."
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
           }
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {convocatoriasFiltradas.map((conv, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border-2 border-[#1ea34a]"
-            >
-              <div className="bg-[#0f3d28] text-white p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-bold line-clamp-2 flex-1">
-                    {conv.nombre_convocatoria}
-                  </h3>
-                </div>
-                {getEstadoBadge(conv)}
-              </div>
-              
-              <div className="p-4 space-y-3">
-                <div>
-                  <span className="font-semibold text-[#0f3d28]">Entidad:</span>
-                  <p className="text-gray-700">{conv.entidad_proponente}</p>
-                </div>
-
-                <div>
-                  <span className="font-semibold text-[#0f3d28]">País:</span>
-                  <p className="text-gray-700">{conv.pais}</p>
-                </div>
-
-                <div>
-                  <span className="font-semibold text-[#0f3d28]">Monto:</span>
-                  <p className="text-gray-700">{conv.monto}</p>
-                </div>
-
-                <div>
-                  <span className="font-semibold text-[#0f3d28]">Fecha de cierre:</span>
-                  <p className="text-gray-700">{conv.fecha_cierre}</p>
-                </div>
-
-                <div>
-                  <span className="font-semibold text-[#0f3d28]">Resumen:</span>
-                  <p className="text-gray-700 text-sm line-clamp-3">{conv.resumen}</p>
-                </div>
-
-                <button
-                  onClick={() => handleVerDetalle(conv)}
-                  className="w-full bg-[#1ea34a] text-white py-2 rounded-md hover:bg-[#0f3d28] transition-colors duration-300 font-semibold"
-                >
-                  Ver Detalle
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Modal de detalle */}
-      {selectedConvocatoria && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="bg-[#0f3d28] text-white p-6 sticky top-0">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 pr-4">
-                  <h3 className="text-2xl font-bold mb-2">
-                    {selectedConvocatoria.nombre_convocatoria}
-                  </h3>
-                  {getEstadoBadge(selectedConvocatoria)}
-                </div>
-                <button
-                  onClick={handleCerrarDetalle}
-                  className="text-white hover:text-[#1ea34a] text-3xl font-bold"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <h4 className="font-bold text-[#0f3d28] text-lg">Entidad Proponente</h4>
-                <p className="text-gray-700">{selectedConvocatoria.entidad_proponente}</p>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-[#0f3d28] text-lg">Monto</h4>
-                <p className="text-gray-700">{selectedConvocatoria.monto}</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <h4 className="font-bold text-[#0f3d28]">Fecha Apertura</h4>
-                  <p className="text-gray-700">{selectedConvocatoria.fecha_apertura}</p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#0f3d28]">Fecha Cierre</h4>
-                  <p className="text-gray-700">{selectedConvocatoria.fecha_cierre}</p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#0f3d28]">Fecha Publicación</h4>
-                  <p className="text-gray-700">{selectedConvocatoria.fecha_publicacion}</p>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-[#0f3d28] text-lg">País</h4>
-                <p className="text-gray-700">{selectedConvocatoria.pais}</p>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-[#0f3d28] text-lg">Temas</h4>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {selectedConvocatoria.temas.split(',').map((tema, idx) => (
-                    <span key={idx} className="bg-[#1ea34a] text-white px-3 py-1 rounded-full text-sm">
-                      {tema.trim()}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-[#0f3d28] text-lg">Resumen</h4>
-                <p className="text-gray-700">{selectedConvocatoria.resumen}</p>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-[#0f3d28] text-lg">Enlaces</h4>
-                <div className="space-y-2">
-                  {selectedConvocatoria.enlaces.split(', ').map((enlace, idx) => (
-                    <a
-                      key={idx}
-                      href={enlace}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-[#1ea34a] hover:underline break-all"
-                    >
-                      {enlace}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+        .animate-slideUp {
+          animation: slideUp 0.3s ease-out;
+        }
+      `}</style>
     </section>
   );
 }
