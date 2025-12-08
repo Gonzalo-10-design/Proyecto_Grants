@@ -267,7 +267,7 @@ for i, post in enumerate(cleaned_posts, start=1):
 
     5. El campo "enlaces" debe incluir al menos el enlace al post original: "{enlace_post}".
 
-    6. Resume el contenido principal en español en máximo 30 palabras.
+    6. Resume el contenido principal en español en máximo 50 palabras.
 
     7. En los campos sin información disponible, deja una cadena vacía "" o un arreglo vacío [] según corresponda.
 
