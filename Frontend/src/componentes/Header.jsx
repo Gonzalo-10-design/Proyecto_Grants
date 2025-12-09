@@ -39,13 +39,13 @@ function Header() {
           {/* Logo y Título */}
           <div className="flex items-center gap-4">
             <img 
-              src="src/assets/imagenes/Logo_isateck.jpeg" 
-              alt="Isateck Logo" 
+              src="src/assets/imagenes/Grantia.png" 
+              alt="Grantia Logo" 
               className="w-16 h-16 rounded-lg shadow-md border-2 border-white"
             />
             <div>
               <h1 className="text-white text-3xl font-extrabold tracking-tight">
-                I+D ESKAR
+                GRANTIA
               </h1>
               <p className="text-gray-200 text-xs font-medium">
                 Inteligencia en Financiación
@@ -64,7 +64,7 @@ function Header() {
                   }`
                 }
               >
-                Inicio
+                Cómo funciona
               </NavLink>
               <NavLink 
                 to="/convocatorias" 
@@ -74,7 +74,7 @@ function Header() {
                   }`
                 }
               >
-                Convocatorias
+                Grants
               </NavLink>
               <NavLink 
                 to="/contacto" 
@@ -84,7 +84,7 @@ function Header() {
                   }`
                 }
               >
-                Contacto
+                Contáctenos
               </NavLink>
             </nav>
 

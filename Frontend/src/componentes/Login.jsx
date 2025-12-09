@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { User, Lock, Mail, LogIn, UserPlus } from 'lucide-react';
-import LogoIsateck from '../assets/imagenes/Logo_isateck.jpeg';
-
+import Grantia from '../assets/imagenes/Grantia.png';
 
 export default function Login({ onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -70,8 +69,8 @@ export default function Login({ onLoginSuccess }) {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           
           <div className="bg-gradient-to-r from-[#0f3d28] to-[#1ea34a] text-white p-8 text-center">
-            <img src={LogoIsateck} alt="Logo Isateck" className="mx-auto mb-4 w-20 h-20 rounded-2xl" />
-            <h1 className="text-3xl font-extrabold mb-2">I+D ESKAR</h1>
+            <img src={Grantia} alt="Logo Grantia" className="mx-auto mb-4 w-20 h-20 rounded-2xl" />
+            <h1 className="text-3xl font-extrabold mb-2">GRANTIA</h1>
             <p className="text-gray-200 text-sm">
               {isLogin ? 'Accede a tu cuenta' : 'Crea tu cuenta nueva'}
             </p>

@@ -32,10 +32,10 @@ export default function Contacto() {
                 <div>
                   <h3 className="font-semibold text-[#0f3d28] mb-1">Correo Electrónico</h3>
                   <a 
-                    href="mailto:soporte@isateck.com" 
+                    href="mailto:info@eskar.com" 
                     className="text-[#1ea34a] hover:text-[#0f3d28] transition-colors"
                   >
-                    soporte@isateck.com
+                    info@eskar.com
                   </a>
                 </div>
               </div>
@@ -45,10 +45,9 @@ export default function Contacto() {
                   <MapPin className="text-[#1ea34a]" size={24} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#0f3d28] mb-1">Dirección</h3>
+                  <h3 className="font-semibold text-[#0f3d28] mb-1">Cel.</h3>
                   <p className="text-gray-700">
-                    Carrera 41C # 73-31<br />
-                    Barranquilla, Colombia
+                    +14074878581<br />
                   </p>
                 </div>
               </div>
