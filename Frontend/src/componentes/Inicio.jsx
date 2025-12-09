@@ -1,8 +1,6 @@
-import { ArrowRight, Target, TrendingUp, Clock, Globe, CheckCircle } from 'lucide-react';
-import UsarHoy from "../assets/imagenes/Usar_hoy.png";
-import Pago from "../assets/imagenes/Pago.png";
+import { ArrowRight, Target, TrendingUp, Clock, Globe, CheckCircle, Search, RefreshCw, Folder, Lightbulb, Brain, FileText, Bell, ClipboardCheck, Workflow } from 'lucide-react';
 
-export default function Cómo_funciona() {
+export default function Inicio() {
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 
@@ -74,32 +72,146 @@ export default function Cómo_funciona() {
         </div>
       </section>
 
-      {/*Imagen debajo de las estadísticas */}
-      <section className="py-12 flex justify-center px-4">
-        <img
-          src={UsarHoy}
-          alt="Imagen ilustrativa GrantIA"
-          className="w-full max-w-3xl rounded-2xl shadow-2xl transform hover:scale-105 transition-transform"
-        />
+      {/* Pricing Cards Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            
+            {/* Plan Básico */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border-2 border-gray-200 hover:shadow-2xl transition-shadow">
+              <div className="text-center mb-8">
+                <h2 className="text-4xl font-bold text-[#0f3d28] mb-3">Plan Básico</h2>
+                <p className="text-gray-600 text-lg">Disponible ahora</p>
+              </div>
+
+              <div className="space-y-5 mb-8">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <Search className="text-[#1ea34a]" size={28} />
+                  </div>
+                  <p className="text-gray-700 text-base leading-relaxed">
+                    Consulta de grants actuales para tu organización
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <RefreshCw className="text-[#1ea34a]" size={28} />
+                  </div>
+                  <p className="text-gray-700 text-base leading-relaxed">
+                    Actualización constante del directorio
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <Folder className="text-[#1ea34a]" size={28} />
+                  </div>
+                  <p className="text-gray-700 text-base leading-relaxed">
+                    Acceso total al directorio de oportunidades
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center mb-8">
+                <div className="text-5xl font-bold text-[#0f3d28] mb-2">
+                  9 USD <span className="text-2xl font-semibold">/ mes</span>
+                </div>
+                <p className="text-gray-600 mt-3">
+                  Oferta de lanzamiento: <span className="font-semibold text-[#1ea34a]">2 USD</span>
+                </p>
+                <p className="text-gray-600">primeros meses (prueba)</p>
+              </div>
+
+              <a
+                href="https://dashboard.stripe.com/logins"
+                className="block w-full bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] hover:from-[#0f3d28] hover:to-[#168f3a] text-white text-center py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+              >
+                Crear cuenta
+              </a>
+            </div>
+
+            {/* Plan Avanzado */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border-2 border-gray-300 relative opacity-95">
+              <div className="text-center mb-8">
+                <h2 className="text-4xl font-bold text-[#0f3d28] mb-3">Plan Avanzado</h2>
+                <p className="text-gray-500 text-lg">En construcción — próximamente</p>
+              </div>
+
+              <div className="space-y-5 mb-8">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <Lightbulb className="text-gray-400" size={28} />
+                  </div>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Creación estructurada de proyectos
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <Brain className="text-gray-400" size={28} />
+                  </div>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Matching inteligente entre tus objetivos y grants
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <FileText className="text-gray-400" size={28} />
+                  </div>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Recomendaciones personalizadas (IA)
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <Bell className="text-gray-400" size={28} />
+                  </div>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Alertas avanzadas
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <ClipboardCheck className="text-gray-400" size={28} />
+                  </div>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Evaluación preliminar de elegibilidad
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <Workflow className="text-gray-400" size={28} />
+                  </div>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    Flujo guiado para preparar solicitudes
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center mb-8">
+                <div className="text-4xl font-semibold text-gray-400">
+                  Próximamente
+                </div>
+              </div>
+
+              <button
+                disabled
+                className="block w-full bg-gray-400 text-white text-center py-4 rounded-xl font-bold text-lg cursor-not-allowed"
+              >
+                No disponible aún
+              </button>
+            </div>
+
+          </div>
+        </div>
       </section>
 
-      {/* Imagen pago */}
-      <section className="py-12 flex justify-center px-4">
-        <img
-        src={Pago}
-        alt="Imagen ilustrativa Pago"
-        className="w-full max-w-3xl rounded-2xl shadow-2xl transform hover:scale-105 transition-transform"
-        />
-      </section>
-          <div className="flex justify-center gap-4 mt-10">
-            <a
-              href="https://dashboard.stripe.com/logins"
-              className="inline-flex items-center gap-2 bg-[#1ea34a] hover:bg-[#168f3a] text-white px-8 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
-            >
-              Crear cuenta
-              <ArrowRight size={20} />
-            </a>
-          </div>
     </div>
   );
 }

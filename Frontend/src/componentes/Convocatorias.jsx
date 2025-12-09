@@ -73,7 +73,8 @@ function Convocatorias() {
     
     if (!fechaCierre || 
         fechaCierre === 'Información no encontrada / Information not found' ||
-        fechaCierre.toLowerCase().includes('no encontrada')) {
+        fechaCierre.toLowerCase().includes('no encontrada') ||
+        fechaCierre.toLowerCase().includes('not found')) {
       return 'sin_informacion';
     }
 
@@ -95,8 +96,11 @@ function Convocatorias() {
   const convocatoriasFiltradas = convocatorias.filter(conv => {
     const estado = determinarEstado(conv);
     
-    if (filtros.estado !== 'todas' && estado !== filtros.estado) {
-      return false;
+    // FILTRO DE ESTADO CORREGIDO
+    if (filtros.estado !== 'todas') {
+      if (filtros.estado !== estado) {
+        return false;
+      }
     }
 
     if (filtros.tema) {
@@ -130,6 +134,13 @@ function Convocatorias() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = convocatoriasFiltradas.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(convocatoriasFiltradas.length / itemsPerPage);
+
+  // Calcular estadísticas de estados para mostrar al usuario
+  const estadisticas = {
+    activas: convocatorias.filter(c => determinarEstado(c) === 'activa').length,
+    vencidas: convocatorias.filter(c => determinarEstado(c) === 'vencida').length,
+    sin_informacion: convocatorias.filter(c => determinarEstado(c) === 'sin_informacion').length
+  };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -208,6 +219,48 @@ function Convocatorias() {
           </p>
         </div>
 
+        {/* Estadísticas de Estados */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-green-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-600 uppercase">Convocatorias Activas</p>
+                <p className="text-3xl font-bold text-green-600">{estadisticas.activas}</p>
+              </div>
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span className="w-6 h-6 bg-green-500 rounded-full"></span>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-2"> Aún puedes aplicar</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-red-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-600 uppercase">Convocatorias Vencidas</p>
+                <p className="text-3xl font-bold text-red-600">{estadisticas.vencidas}</p>
+              </div>
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <span className="w-6 h-6 bg-red-500 rounded-full"></span>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-2"> Fecha límite superada</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-gray-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-600 uppercase">Sin Información</p>
+                <p className="text-3xl font-bold text-gray-600">{estadisticas.sin_informacion}</p>
+              </div>
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="w-6 h-6 bg-gray-500 rounded-full"></span>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-2"> Verificar en la fuente</p>
+          </div>
+        </div>
+
         {/* Panel de Filtros */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
@@ -237,10 +290,10 @@ function Convocatorias() {
                 }}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1ea34a] focus:border-transparent transition-all"
               >
-                <option value="todas">Todas</option>
-                <option value="activas">🟢 Activas</option>
-                <option value="vencidas">🔴 Vencidas</option>
-                <option value="sin_informacion">⚪ Sin información</option>
+                <option value="todas">📋 Todas ({convocatorias.length})</option>
+                <option value="activa">🟢 Activas ({estadisticas.activas})</option>
+                <option value="vencida">🔴 Vencidas ({estadisticas.vencidas})</option>
+                <option value="sin_informacion">⚪ Sin información ({estadisticas.sin_informacion})</option>
               </select>
             </div>
 
@@ -286,6 +339,15 @@ function Convocatorias() {
 
           <div className="mt-4 text-sm font-medium text-gray-600 bg-gray-50 px-4 py-2 rounded-lg inline-block">
             Mostrando {currentItems.length} de {convocatoriasFiltradas.length} convocatorias
+            {filtros.estado !== 'todas' && (
+              <span className="ml-2 text-[#1ea34a]">
+                • Filtrado por: {
+                  filtros.estado === 'activa' ? 'Activas' :
+                  filtros.estado === 'vencida' ? 'Vencidas' : 
+                  'Sin información'
+                }
+              </span>
+            )}
           </div>
         </div>
 
@@ -299,6 +361,14 @@ function Convocatorias() {
                 : "No se encontraron convocatorias con los filtros aplicados."
               }
             </div>
+            {filtros.estado !== 'todas' && (
+              <button
+                onClick={limpiarFiltros}
+                className="mt-4 text-[#1ea34a] hover:text-[#0f3d28] font-medium underline"
+              >
+                Limpiar filtros y ver todas las convocatorias
+              </button>
+            )}
           </div>
         ) : (
           <>
@@ -375,7 +445,6 @@ function Convocatorias() {
                 <div className="flex gap-2">
                   {[...Array(totalPages)].map((_, index) => {
                     const pageNumber = index + 1;
-                    // Mostrar solo algunas páginas
                     if (
                       pageNumber === 1 ||
                       pageNumber === totalPages ||
