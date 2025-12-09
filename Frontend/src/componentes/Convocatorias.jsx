@@ -290,10 +290,10 @@ function Convocatorias() {
                 }}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1ea34a] focus:border-transparent transition-all"
               >
-                <option value="todas">📋 Todas ({convocatorias.length})</option>
-                <option value="activa">🟢 Activas ({estadisticas.activas})</option>
-                <option value="vencida">🔴 Vencidas ({estadisticas.vencidas})</option>
-                <option value="sin_informacion">⚪ Sin información ({estadisticas.sin_informacion})</option>
+                <option value="todas"> Todas ({convocatorias.length})</option>
+                <option value="activa"> Activas ({estadisticas.activas})</option>
+                <option value="vencida"> Vencidas ({estadisticas.vencidas})</option>
+                <option value="sin_informacion"> Sin información ({estadisticas.sin_informacion})</option>
               </select>
             </div>
 
