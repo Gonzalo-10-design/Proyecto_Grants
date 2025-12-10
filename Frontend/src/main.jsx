@@ -21,7 +21,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/verify-session', {
+      const response = await fetch('http://206.189.112.83:5002/api/verify-session', {
         headers: {
           'Authorization': token
         }

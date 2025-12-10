@@ -16,7 +16,7 @@ function Header() {
     const token = localStorage.getItem('authToken');
     
     try {
-      await fetch('http://localhost:5000/api/logout', {
+      await fetch('http://206.189.112.83:5002/api/logout', {
         method: 'POST',
         headers: {
           'Authorization': token

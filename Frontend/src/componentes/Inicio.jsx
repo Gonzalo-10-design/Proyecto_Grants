@@ -15,12 +15,12 @@ export default function Inicio() {
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
             GRANTIA
             <span className="block text-[#1ea34a] mt-2">
-              Te ayuda a encontrar dinero para tus proyectos.
+              Búsqueda de recursos para tus proyectos
             </span>
           </h1>
 
           <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
-            Hoy, puedes explorar un directorio con oportunidades de financiación disponibles en Latinoamérica y Estados Unidos.
+            Hoy, puedes explorar un directorio con oportunidades de financiación disponibles en Latinoamérica, Europa y Estados Unidos.
           </p>
 
           <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed mt-4">

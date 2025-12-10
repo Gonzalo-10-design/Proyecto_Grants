@@ -43,7 +43,7 @@ function Convocatorias() {
     try {
       const token = localStorage.getItem('authToken');
       
-      const response = await fetch('http://localhost:5000/api/convocatorias', {
+      const response = await fetch('http://206.189.112.83:5002/api/convocatorias', {
         headers: {
           'Authorization': token
         }

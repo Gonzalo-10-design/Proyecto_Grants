@@ -27,7 +27,7 @@ export default function Login({ onLoginSuccess }) {
 
     try {
       const endpoint = isLogin ? 'login' : 'register';
-      const response = await fetch(`http://localhost:5000/api/${endpoint}`, {
+      const response = await fetch(`http://206.189.112.83:5002/api/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -185,12 +185,6 @@ export default function Login({ onLoginSuccess }) {
               </button>
             </div>
           </div>
-        </div>
-
-        <div className="mt-6 text-center">
-          <p className="text-white text-sm">
-            Inteligencia Estratégica para el Acceso a Financiación Global
-          </p>
         </div>
       </div>
     </div>
