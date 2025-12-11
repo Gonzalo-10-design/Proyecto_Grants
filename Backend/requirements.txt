@@ -1,0 +1,17 @@
+# API Server Dependencies
+Flask==3.0.0
+flask-cors==4.0.0
+
+# Scraping and Data Collection
+apify-client==1.7.1
+
+# AI/ML
+openai==1.12.0
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Database (SQLite viene incluido con Python, no necesita instalación)
+
+# Utilities
+requests==2.31.0

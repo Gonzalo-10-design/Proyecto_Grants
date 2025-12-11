@@ -88,7 +88,7 @@ export default function Contacto() {
           
           <div className="flex justify-center gap-6">
             <a 
-              href="https://www.linkedin.com/company/isateck" 
+              href="" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex flex-col items-center gap-2 p-6 rounded-xl bg-gray-50 hover:bg-[#1ea34a] hover:text-white transition-all duration-300 group min-w-[120px]"
@@ -98,7 +98,7 @@ export default function Contacto() {
             </a>
 
             <a 
-              href="https://www.twitter.com/isateck" 
+              href="" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex flex-col items-center gap-2 p-6 rounded-xl bg-gray-50 hover:bg-[#1ea34a] hover:text-white transition-all duration-300 group min-w-[120px]"
@@ -108,7 +108,7 @@ export default function Contacto() {
             </a>
 
             <a 
-              href="https://www.facebook.com/isateck" 
+              href="" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex flex-col items-center gap-2 p-6 rounded-xl bg-gray-50 hover:bg-[#1ea34a] hover:text-white transition-all duration-300 group min-w-[120px]"

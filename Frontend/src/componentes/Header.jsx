@@ -47,9 +47,6 @@ function Header() {
               <h1 className="text-white text-3xl font-extrabold tracking-tight">
                 GRANTIA
               </h1>
-              <p className="text-gray-200 text-xs font-medium">
-                Inteligencia en Financiación
-              </p>
             </div>
           </div>
 

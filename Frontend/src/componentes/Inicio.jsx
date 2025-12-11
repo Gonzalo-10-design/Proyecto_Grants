@@ -124,7 +124,7 @@ export default function Inicio() {
               </div>
 
               <a
-                href="https://dashboard.stripe.com/logins"
+                href=""
                 className="block w-full bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] hover:from-[#0f3d28] hover:to-[#168f3a] text-white text-center py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
               >
                 Crear cuenta
