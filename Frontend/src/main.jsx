@@ -4,6 +4,9 @@ import './index.css'
 import AppRouter from './router'
 import Login from './componentes/Login'
 
+// dotenv → cargado automáticamente por CRA
+const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -14,18 +17,21 @@ function App() {
 
   const verifySession = async () => {
     const token = localStorage.getItem('authToken');
-    
+
     if (!token) {
       setLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('http://206.189.112.83:5002/api/verify-session', {
-        headers: {
-          'Authorization': token
+      const response = await fetch(
+        `${API_BASE_URL}/api/verify-session`,
+        {
+          headers: {
+            Authorization: token
+          }
         }
-      });
+      );
 
       if (response.ok) {
         setIsAuthenticated(true);
@@ -54,19 +60,15 @@ function App() {
     );
   }
 
-  return (
-    <>
-      {isAuthenticated ? (
-        <AppRouter />
-      ) : (
-        <Login onLoginSuccess={handleLoginSuccess} />
-      )}
-    </>
+  return isAuthenticated ? (
+    <AppRouter />
+  ) : (
+    <Login onLoginSuccess={handleLoginSuccess} />
   );
 }
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
-  </StrictMode>,
-)
+  </StrictMode>
+);
