@@ -9,8 +9,7 @@ import sqlite3
 # Cargar variables de entorno
 load_dotenv()
 client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    project="proj_98P5aN2pjysn4wr84CiXq61a"
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 APIFY_TOKEN = os.getenv("APIFY_TOKEN")
 OPENAI_KEY = os.getenv("OPENAI_API_KEY")
