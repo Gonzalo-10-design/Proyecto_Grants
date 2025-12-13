@@ -9,6 +9,7 @@ function Header() {
   const [username, setUsername] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -20,8 +21,18 @@ function Header() {
       setScrolled(window.scrollY > 20);
     };
 
+    // Escuchar evento personalizado para ocultar/mostrar header
+    const handleHeaderVisibility = (event) => {
+      setIsHidden(event.detail.hidden);
+    };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('toggleHeader', handleHeaderVisibility);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('toggleHeader', handleHeaderVisibility);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -46,6 +57,8 @@ function Header() {
   return (
     <header 
       className={`w-full sticky top-0 transition-all duration-300 z-40 ${
+        isHidden ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'
+      } ${
         scrolled 
           ? 'bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] shadow-2xl' 
           : 'bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] shadow-lg'

@@ -168,9 +168,18 @@ function Convocatorias({ authState }) {
     }
   }, [convocatorias]);
 
-    useEffect(() => {
-      document.body.style.overflow = selectedConvocatoria ? 'hidden' : 'auto';
-    }, [selectedConvocatoria]);
+  useEffect(() => {
+    // Controlar overflow del body y visibilidad del header
+    if (selectedConvocatoria) {
+      document.body.style.overflow = 'hidden';
+      // Emitir evento para ocultar el header
+      window.dispatchEvent(new CustomEvent('toggleHeader', { detail: { hidden: true } }));
+    } else {
+      document.body.style.overflow = 'auto';
+      // Emitir evento para mostrar el header
+      window.dispatchEvent(new CustomEvent('toggleHeader', { detail: { hidden: false } }));
+    }
+  }, [selectedConvocatoria]);
 
   const fetchConvocatorias = async () => {
     try {
@@ -425,151 +434,151 @@ function Convocatorias({ authState }) {
         )}
 
         {selectedConvocatoria && (
+          <div
+            className="fixed inset-0 bg-white/30 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fadeIn"
+            onClick={() => setSelectedConvocatoria(null)}
+          >
             <div
-              className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-60 animate-fadeIn"
-              onClick={() => setSelectedConvocatoria(null)}
+              className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp border-2 border-gray-200"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div
-                className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Header */}
-                <div className="sticky top-0 bg-gradient-to-r from-[#0f3d28] to-[#1ea34a] text-white p-6 rounded-t-2xl z-10">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1 pr-4">
-                      <h3 className="text-3xl font-bold mb-2">
-                        {selectedConvocatoria.nombre_convocatoria}
-                      </h3>
-                      {getEstadoBadge(selectedConvocatoria)}
-                    </div>
-                    <button
-                      onClick={() => setSelectedConvocatoria(null)}
-                      className="p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-all"
-                    >
-                      <X size={26} />
-                    </button>
+              {/* Header */}
+              <div className="sticky top-0 bg-gradient-to-r from-[#0f3d28] to-[#1ea34a] text-white p-6 rounded-t-2xl z-10 shadow-lg">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 pr-4">
+                    <h3 className="text-3xl font-bold mb-2">
+                      {selectedConvocatoria.nombre_convocatoria}
+                    </h3>
+                    {getEstadoBadge(selectedConvocatoria)}
                   </div>
-                </div>
-
-                {/* Contenido */}
-                <div className="p-8 space-y-6">
-
-                  {/* Bloque 1: Entidad / Monto */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
-                      <h4 className="text-sm font-bold text-[#0f3d28] uppercase mb-2 flex items-center gap-2">
-                        <Building size={16} />
-                        Entidad Proponente
-                      </h4>
-                      <p className="text-gray-700">
-                        {selectedConvocatoria.entidad_proponente}
-                      </p>
-                    </div>
-
-                    <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
-                      <h4 className="text-sm font-bold text-[#0f3d28] uppercase mb-2 flex items-center gap-2">
-                        <CreditCard size={16} />
-                        Monto
-                      </h4>
-                      <p className="text-gray-700">
-                        {selectedConvocatoria.monto}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bloque 2: Fechas */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-xs font-bold text-[#0f3d28] uppercase mb-1">
-                        Apertura
-                      </h4>
-                      <p className="text-gray-700">
-                        {selectedConvocatoria.fecha_apertura}
-                      </p>
-                    </div>
-
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-xs font-bold text-[#0f3d28] uppercase mb-1">
-                        Cierre
-                      </h4>
-                      <p className="text-gray-700">
-                        {selectedConvocatoria.fecha_cierre}
-                      </p>
-                    </div>
-
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-xs font-bold text-[#0f3d28] uppercase mb-1">
-                        Publicación
-                      </h4>
-                      <p className="text-gray-700">
-                        {selectedConvocatoria.fecha_publicacion}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bloque 3: País */}
-                  <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
-                    <h4 className="text-sm font-bold text-[#0f3d28] uppercase mb-2 flex items-center gap-2">
-                      <MapPin size={16} />
-                      País
-                    </h4>
-                    <p className="text-gray-700">
-                      {selectedConvocatoria.pais}
-                    </p>
-                  </div>
-
-                  {/* Bloque 4: Temas */}
-                  <div>
-                    <h4 className="text-lg font-bold text-[#0f3d28] mb-3">
-                      Temas
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedConvocatoria.temas.split(',').map((tema, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-gradient-to-r from-[#1ea34a] to-[#0f3d28] text-white px-4 py-2 rounded-full text-sm font-medium"
-                        >
-                          {tema.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Bloque 5: Resumen */}
-                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 border border-gray-200">
-                    <h4 className="text-lg font-bold text-[#0f3d28] mb-3">
-                      Resumen
-                    </h4>
-                    <p className="text-gray-700 leading-relaxed">
-                      {selectedConvocatoria.resumen}
-                    </p>
-                  </div>
-
-                  {/* Bloque 6: Enlaces */}
-                  <div>
-                    <h4 className="text-lg font-bold text-[#0f3d28] mb-3">
-                      Enlaces oficiales
-                    </h4>
-                    <div className="space-y-2">
-                      {selectedConvocatoria.enlaces.split(',').map((l, i) => (
-                        <a
-                          key={i}
-                          href={l.trim()}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg text-[#1ea34a] hover:text-[#0f3d28] hover:bg-gray-100 transition-all"
-                        >
-                          <ExternalLink size={16} />
-                          <span className="break-all">{l.trim()}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-
+                  <button
+                    onClick={() => setSelectedConvocatoria(null)}
+                    className="p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-all"
+                  >
+                    <X size={26} />
+                  </button>
                 </div>
               </div>
+
+              {/* Contenido */}
+              <div className="p-8 space-y-6">
+
+                {/* Bloque 1: Entidad / Monto */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
+                    <h4 className="text-sm font-bold text-[#0f3d28] uppercase mb-2 flex items-center gap-2">
+                      <Building size={16} />
+                      Entidad Proponente
+                    </h4>
+                    <p className="text-gray-700">
+                      {selectedConvocatoria.entidad_proponente}
+                    </p>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
+                    <h4 className="text-sm font-bold text-[#0f3d28] uppercase mb-2 flex items-center gap-2">
+                      <CreditCard size={16} />
+                      Monto
+                    </h4>
+                    <p className="text-gray-700">
+                      {selectedConvocatoria.monto}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bloque 2: Fechas */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-xs font-bold text-[#0f3d28] uppercase mb-1">
+                      Apertura
+                    </h4>
+                    <p className="text-gray-700">
+                      {selectedConvocatoria.fecha_apertura}
+                    </p>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-xs font-bold text-[#0f3d28] uppercase mb-1">
+                      Cierre
+                    </h4>
+                    <p className="text-gray-700">
+                      {selectedConvocatoria.fecha_cierre}
+                    </p>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-xs font-bold text-[#0f3d28] uppercase mb-1">
+                      Publicación
+                    </h4>
+                    <p className="text-gray-700">
+                      {selectedConvocatoria.fecha_publicacion}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bloque 3: País */}
+                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-[#1ea34a]">
+                  <h4 className="text-sm font-bold text-[#0f3d28] uppercase mb-2 flex items-center gap-2">
+                    <MapPin size={16} />
+                    País
+                  </h4>
+                  <p className="text-gray-700">
+                    {selectedConvocatoria.pais}
+                  </p>
+                </div>
+
+                {/* Bloque 4: Temas */}
+                <div>
+                  <h4 className="text-lg font-bold text-[#0f3d28] mb-3">
+                    Temas
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedConvocatoria.temas.split(',').map((tema, idx) => (
+                      <span
+                        key={idx}
+                        className="bg-gradient-to-r from-[#1ea34a] to-[#0f3d28] text-white px-4 py-2 rounded-full text-sm font-medium"
+                      >
+                        {tema.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bloque 5: Resumen */}
+                <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-lg font-bold text-[#0f3d28] mb-3">
+                    Resumen
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    {selectedConvocatoria.resumen}
+                  </p>
+                </div>
+
+                {/* Bloque 6: Enlaces */}
+                <div>
+                  <h4 className="text-lg font-bold text-[#0f3d28] mb-3">
+                    Enlaces oficiales
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedConvocatoria.enlaces.split(',').map((l, i) => (
+                      <a
+                        key={i}
+                        href={l.trim()}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 bg-gray-50 p-3 rounded-lg text-[#1ea34a] hover:text-[#0f3d28] hover:bg-gray-100 transition-all"
+                      >
+                        <ExternalLink size={16} />
+                        <span className="break-all">{l.trim()}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
             </div>
-          )}
+          </div>
+        )}
       </div>
 
       <style>{`
@@ -589,13 +598,28 @@ function Convocatorias({ authState }) {
           }
         }
 
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out forwards;
+          animation: fadeIn 0.3s ease-out forwards;
         }
 
         .animate-fadeInUp {
           animation: fadeInUp 0.6s ease-out forwards;
           opacity: 0;
+        }
+
+        .animate-slideUp {
+          animation: slideUp 0.4s ease-out forwards;
         }
 
         .line-clamp-1 {
