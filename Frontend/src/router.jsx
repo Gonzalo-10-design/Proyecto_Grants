@@ -5,6 +5,7 @@ import Convocatorias from './componentes/Convocatorias'
 import Login from './componentes/Login'
 import Layout from './Layout/Layout'
 import LayoutPublico from './Layout/LayoutPublico'
+import PageTransition from './componentes/PageTransition'
 
 export default function AppRouter({ authState, onLoginSuccess }) {
   // Si el usuario está autenticado, usar Layout con header completo
@@ -31,7 +32,15 @@ export default function AppRouter({ authState, onLoginSuccess }) {
             element={<Convocatorias authState={authState} />} 
           />
         </Route>
-
+        
+        // Envolver cada Route con PageTransition
+        <Route element={<Layout />}>
+          <Route path="/convocatorias" element={
+            <PageTransition>
+              <Convocatorias authState={authState} />
+            </PageTransition>
+          } />
+        </Route>
         {/* Redirect de rutas no encontradas */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,222 +1,208 @@
 import { ArrowRight, Target, TrendingUp, Clock, Globe, CheckCircle, Search, RefreshCw, Folder, Lightbulb, Brain, FileText, Bell, ClipboardCheck, Workflow } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import UsarHoy from '../assets/imagenes/Usar_hoy.webp';
 
 export default function Inicio() {
+  const imageRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fadeInUp');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (imageRef.current) {
+      observer.observe(imageRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 
-      {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] text-white pt-10 pb-20 px-4">
+      {/* Hero Section*/}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] text-white pt-16 pb-24 px-4">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-[#1ea34a] rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0f3d28] rounded-full filter blur-3xl"></div>
+          <div className="absolute top-0 left-0 w-96 h-96 bg-[#1ea34a] rounded-full filter blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0f3d28] rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-5 leading-tight animate-fadeInDown">
             GRANTIA
             <span className="block text-[#1ea34a] mt-2">
               Búsqueda de recursos para tus proyectos
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
-            Hoy, puedes explorar un directorio con oportunidades de financiación disponibles en Latinoamérica, Europa y Estados Unidos.
-          </p>
+          <div className="space-y-4 mb-8 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+            <p className="text-lg md:text-xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
+              Hoy, puedes explorar un directorio con oportunidades de financiación disponibles en Latinoamérica, Europa y Estados Unidos.
+            </p>
 
-          <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed mt-4">
-            En el futuro, GRANTIA conectará lo que quieres lograr con las convocatorias correctas, para que tus ideas se conviertan en proyectos reales: sociales, ambientales, científicos o tecnológicos.
-          </p>
+            <p className="text-lg md:text-xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
+              En el futuro, GRANTIA conectará lo que quieres lograr con las convocatorias correctas, para que tus ideas se conviertan en proyectos reales.
+            </p>
+          </div>
 
-          <div className="flex justify-center gap-4 mt-10">
+          <div className="flex justify-center gap-4 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
             <a
               href="/convocatorias"
-              className="inline-flex items-center gap-2 bg-[#1ea34a] hover:bg-[#168f3a] text-white px-8 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+              className="group inline-flex items-center gap-2 bg-[#1ea34a] hover:bg-[#168f3a] text-white px-8 py-3 rounded-lg font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:scale-95"
             >
               Explorar Oportunidades
-              <ArrowRight size={20} />
+              <ArrowRight size={20} className="transition-transform duration-300 group-hover:translate-x-1" />
             </a>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-12 bg-[#e6f4ec] shadow-sm">
+      {/* Stats Section - Más compacto y con animaciones */}
+      <section className="py-10 bg-[#e6f4ec] shadow-inner">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#1ea34a] bg-opacity-10 rounded-full mb-4">
-                <Globe className="text-[#1ea34a]" size={32} />
+            <div className="text-center transform transition-all duration-300 hover:scale-105 hover:-translate-y-1">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1ea34a] to-[#0f3d28] rounded-full mb-3 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+                <Globe className="text-white" size={28} />
               </div>
-              <h3 className="text-4xl font-bold text-[#0f3d28] mb-2">30+</h3>
-              <p className="text-gray-600">Fuentes Globales</p>
+              <h3 className="text-3xl font-bold text-[#0f3d28] mb-1">30+</h3>
+              <p className="text-gray-600 text-sm font-medium">Fuentes Globales</p>
             </div>
 
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#1ea34a] bg-opacity-10 rounded-full mb-4">
-                <Clock className="text-[#1ea34a]" size={32} />
+            <div className="text-center transform transition-all duration-300 hover:scale-105 hover:-translate-y-1">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1ea34a] to-[#0f3d28] rounded-full mb-3 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+                <Clock className="text-white" size={28} />
               </div>
-              <h3 className="text-4xl font-bold text-[#0f3d28] mb-2">24/7</h3>
-              <p className="text-gray-600">Monitorización Continua</p>
+              <h3 className="text-3xl font-bold text-[#0f3d28] mb-1">24/7</h3>
+              <p className="text-gray-600 text-sm font-medium">Monitorización Continua</p>
             </div>
 
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#1ea34a] bg-opacity-10 rounded-full mb-4">
-                <TrendingUp className="text-[#1ea34a]" size={32} />
+            <div className="text-center transform transition-all duration-300 hover:scale-105 hover:-translate-y-1">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1ea34a] to-[#0f3d28] rounded-full mb-3 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+                <TrendingUp className="text-white" size={28} />
               </div>
-              <h3 className="text-4xl font-bold text-[#0f3d28] mb-2">100%</h3>
-              <p className="text-gray-600">Datos Verificados</p>
+              <h3 className="text-3xl font-bold text-[#0f3d28] mb-1">100%</h3>
+              <p className="text-gray-600 text-sm font-medium">Datos Verificados</p>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* Imagen destacada */}
-      <section className="py-16 px-4 bg-[#e6f4ec] shadow-sm">
-        <div className="max-w-6xl mx-auto flex justify-center">
+      {/* Imagen destacada - Con animación de entrada */}
+      <section ref={imageRef} className="py-12 px-4 bg-[#e6f4ec]">
+        <div className="max-w-6xl mx-auto flex justify-center opacity-90">
           <img
             src={UsarHoy}
             alt="Usar Grantia Hoy"
-            className="max-w-full md:max-w-4xl rounded-2xl shadow-xl
-                       transition-all duration-700 ease-out
-                       transform hover:scale-105 hover:-translate-y-2"
+            className="max-w-full md:max-w-4xl rounded-2xl shadow-2xl
+                      transition-transform duration-500 hover:scale-[1.02]"
           />
         </div>
       </section>
 
-      {/* Pricing Cards Section */}
-      <section className="py-16 px-4">
+      {/* Pricing Cards Section - Más compacto */}
+      <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             
             {/* Plan Básico */}
-            <div className="bg-white rounded-3xl shadow-xl p-8 border-2 border-gray-200 hover:shadow-2xl transition-shadow">
-              <div className="text-center mb-8">
-                <h2 className="text-4xl font-bold text-[#0f3d28] mb-3">Plan Básico</h2>
-                <p className="text-gray-600 text-lg">Disponible ahora</p>
+            <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-gray-200 hover:shadow-2xl hover:border-[#1ea34a] transition-all duration-300 transform hover:-translate-y-1">
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold text-[#0f3d28] mb-2">Plan Básico</h2>
+                <p className="text-gray-600">Disponible ahora</p>
               </div>
 
-              <div className="space-y-5 mb-8">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <Search className="text-[#1ea34a]" size={28} />
+              <div className="space-y-4 mb-6">
+                <div className="flex items-start gap-3 group">
+                  <div className="flex-shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
+                    <Search className="text-[#1ea34a]" size={24} />
                   </div>
-                  <p className="text-gray-700 text-base leading-relaxed">
+                  <p className="text-gray-700 text-sm leading-relaxed">
                     Consulta de grants actuales para tu organización
                   </p>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <RefreshCw className="text-[#1ea34a]" size={28} />
+                <div className="flex items-start gap-3 group">
+                  <div className="flex-shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
+                    <RefreshCw className="text-[#1ea34a]" size={24} />
                   </div>
-                  <p className="text-gray-700 text-base leading-relaxed">
+                  <p className="text-gray-700 text-sm leading-relaxed">
                     Actualización constante del directorio
                   </p>
                 </div>
 
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <Folder className="text-[#1ea34a]" size={28} />
+                <div className="flex items-start gap-3 group">
+                  <div className="flex-shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
+                    <Folder className="text-[#1ea34a]" size={24} />
                   </div>
-                  <p className="text-gray-700 text-base leading-relaxed">
+                  <p className="text-gray-700 text-sm leading-relaxed">
                     Acceso total al directorio de oportunidades
                   </p>
                 </div>
               </div>
 
-              <div className="text-center mb-8">
-                <div className="text-5xl font-bold text-[#0f3d28] mb-2">
-                  9 USD <span className="text-2xl font-semibold">/ mes</span>
+              <div className="text-center mb-6">
+                <div className="text-4xl font-bold text-[#0f3d28] mb-2">
+                  9 USD <span className="text-xl font-semibold">/ mes</span>
                 </div>
-                <p className="text-gray-600 mt-3">
-                  Oferta de lanzamiento: <span className="font-semibold text-[#1ea34a]">2 USD</span>
-                </p>
-                <p className="text-gray-600">primeros meses (prueba)</p>
+                <div className="inline-block bg-[#1ea34a] bg-opacity-10 px-3 py-1 rounded-full">
+                  <p className="text-sm text-[#0f3d28] font-semibold">
+                    Oferta: <span className="text-black">2 USD/mes</span>
+                  </p>
+                </div>
               </div>
 
               <a
                 href="/Convocatorias"
-                className="block w-full bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] hover:from-[#0f3d28] hover:to-[#168f3a] text-white text-center py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+                className="block w-full bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] hover:from-[#0f3d28] hover:to-[#168f3a] text-white text-center py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95"
               >
                 Crear cuenta
               </a>
             </div>
 
             {/* Plan Avanzado */}
-            <div className="bg-white rounded-3xl shadow-xl p-8 border-2 border-gray-300 relative opacity-95">
-              <div className="text-center mb-8">
-                <h2 className="text-4xl font-bold text-[#0f3d28] mb-3">Plan Avanzado</h2>
-                <p className="text-gray-500 text-lg">En construcción — próximamente</p>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-xl p-6 border-2 border-gray-300 relative transition-all duration-300 hover:shadow-2xl">
+              <div className="absolute top-3 right-3 bg-gray-600 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                Próximamente
               </div>
 
-              <div className="space-y-5 mb-8">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <Lightbulb className="text-gray-400" size={28} />
-                  </div>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    Creación estructurada de proyectos
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <Brain className="text-gray-400" size={28} />
-                  </div>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    Matching inteligente entre tus objetivos y grants
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <FileText className="text-gray-400" size={28} />
-                  </div>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    Recomendaciones personalizadas (IA)
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <Bell className="text-gray-400" size={28} />
-                  </div>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    Alertas avanzadas
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <ClipboardCheck className="text-gray-400" size={28} />
-                  </div>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    Evaluación preliminar de elegibilidad
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <Workflow className="text-gray-400" size={28} />
-                  </div>
-                  <p className="text-gray-600 text-base leading-relaxed">
-                    Flujo guiado para preparar solicitudes
-                  </p>
-                </div>
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-bold text-gray-700 mb-2">Plan Avanzado</h2>
+                <p className="text-gray-500">En construcción</p>
               </div>
 
-              <div className="text-center mb-8">
-                <div className="text-4xl font-semibold text-gray-400">
-                  Próximamente
-                </div>
+              <div className="space-y-3 mb-6">
+                {[
+                  { icon: Lightbulb, text: "Creación estructurada de proyectos" },
+                  { icon: Brain, text: "Matching inteligente con IA" },
+                  { icon: FileText, text: "Recomendaciones personalizadas" },
+                  { icon: Bell, text: "Alertas avanzadas" },
+                  { icon: ClipboardCheck, text: "Evaluación de elegibilidad" },
+                  { icon: Workflow, text: "Flujo guiado de solicitudes" }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3 opacity-60">
+                    <div className="flex-shrink-0 mt-1">
+                      <item.icon className="text-gray-400" size={20} />
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {item.text}
+                    </p>
+                  </div>
+                ))}
               </div>
 
               <button
                 disabled
-                className="block w-full bg-gray-400 text-white text-center py-4 rounded-xl font-bold text-lg cursor-not-allowed"
+                className="block w-full bg-gray-400 text-white text-center py-3 rounded-xl font-bold cursor-not-allowed"
               >
                 No disponible aún
               </button>
@@ -225,6 +211,47 @@ export default function Inicio() {
           </div>
         </div>
       </section>
+
+      <style>{`
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fadeInDown {
+          animation: fadeInDown 0.8s ease-out forwards;
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .animate-fadeInUp {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+      `}</style>
 
     </div>
   );
