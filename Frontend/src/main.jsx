@@ -4,12 +4,15 @@ import './index.css'
 import AppRouter from './router'
 import Login from './componentes/Login'
 
-// dotenv → cargado automáticamente por Vite
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authState, setAuthState] = useState({
+    isAuthenticated: false,
+    username: null,
+    estadoAcceso: null,
+    tieneAccesoPremium: false
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +38,13 @@ function App() {
       );
 
       if (response.ok) {
-        setIsAuthenticated(true);
+        const data = await response.json();
+        setAuthState({
+          isAuthenticated: true,
+          username: data.username,
+          estadoAcceso: data.estado_acceso,
+          tieneAccesoPremium: data.tiene_acceso_premium
+        });
       } else {
         localStorage.removeItem('authToken');
         localStorage.removeItem('username');
@@ -50,7 +59,7 @@ function App() {
   };
 
   const handleLoginSuccess = () => {
-    setIsAuthenticated(true);
+    verifySession(); // Recargar estado después del login
   };
 
   if (loading) {
@@ -61,10 +70,13 @@ function App() {
     );
   }
 
-  return isAuthenticated ? (
-    <AppRouter />
-  ) : (
-    <Login onLoginSuccess={handleLoginSuccess} />
+  // IMPORTANTE: Ahora SIEMPRE mostramos el AppRouter
+  // El control de acceso se hace en el componente Convocatorias
+  return (
+    <AppRouter 
+      authState={authState}
+      onLoginSuccess={handleLoginSuccess}
+    />
   );
 }
 

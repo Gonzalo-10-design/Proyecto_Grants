@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Search,
   Filter,
@@ -8,25 +9,24 @@ import {
   ExternalLink,
   Calendar,
   MapPin,
-  DollarSign,
-  Building
+  Building,
+  Lock,
+  CreditCard
 } from 'lucide-react';
 
-// dotenv → cargado automáticamente por Vite
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-
-function Convocatorias() {
+function Convocatorias({ authState }) {
+  const navigate = useNavigate();
   const [convocatorias, setConvocatorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedConvocatoria, setSelectedConvocatoria] = useState(null);
 
-  // Paginación
+  // Estados de UI
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
-  // Filtros
   const [filtros, setFiltros] = useState({
     estado: 'todas',
     tema: '',
@@ -35,9 +35,143 @@ function Convocatorias() {
 
   const [temasDisponibles, setTemasDisponibles] = useState([]);
 
+  // Si no está autenticado, redirigir al login
   useEffect(() => {
-    fetchConvocatorias();
-  }, []);
+    if (!authState.isAuthenticated) {
+      navigate('/login');
+    }
+  }, [authState.isAuthenticated, navigate]);
+
+  // Si está autenticado pero no tiene acceso premium, mostrar mensaje
+  if (authState.isAuthenticated && !authState.tieneAccesoPremium) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-4">
+        <div className="max-w-3xl mx-auto">
+          
+          {/* Card de acceso restringido */}
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#0f3d28] to-[#1ea34a] text-white p-8 text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <Lock size={40} />
+              </div>
+              <h1 className="text-3xl font-extrabold mb-2">
+                Acceso Premium Requerido
+              </h1>
+              <p className="text-gray-200">
+                Esta sección está disponible solo para usuarios premium
+              </p>
+            </div>
+
+            {/* Contenido */}
+            <div className="p-8">
+              <div className="space-y-6">
+                
+                <div>
+                  <h2 className="text-2xl font-bold text-[#0f3d28] mb-4">
+                    ¿Qué incluye el acceso premium?
+                  </h2>
+                  
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-[#1ea34a] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#1ea34a] text-sm">✓</span>
+                      </div>
+                      <span className="text-gray-700">
+                        Acceso completo al directorio actualizado de convocatorias
+                      </span>
+                    </li>
+                    
+                    <li className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-[#1ea34a] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#1ea34a] text-sm">✓</span>
+                      </div>
+                      <span className="text-gray-700">
+                        Filtros avanzados por tema, país y estado
+                      </span>
+                    </li>
+                    
+                    <li className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-[#1ea34a] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#1ea34a] text-sm">✓</span>
+                      </div>
+                      <span className="text-gray-700">
+                        Información detallada de cada oportunidad
+                      </span>
+                    </li>
+                    
+                    <li className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-[#1ea34a] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-[#1ea34a] text-sm">✓</span>
+                      </div>
+                      <span className="text-gray-700">
+                        Actualizaciones constantes de nuevas convocatorias
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="border-t pt-6">
+                  <div className="bg-gradient-to-br from-[#0f3d28] to-[#1ea34a] text-white p-6 rounded-xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-2xl font-bold">Plan Básico</h3>
+                        <p className="text-gray-200 text-sm mt-1">Acceso completo al directorio</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-bold">9 USD</div>
+                        <div className="text-sm text-gray-200">por mes</div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white bg-opacity-10 rounded-lg p-4 mb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CreditCard size={20} />
+                        <span className="font-semibold">Oferta de lanzamiento</span>
+                      </div>
+                      <div className="text-2xl font-bold">
+                        2 USD / mes
+                      </div>
+                      <div className="text-sm text-gray-200">
+                        Primeros meses (periodo de prueba)
+                      </div>
+                    </div>
+
+                    <a
+                      href="/contacto"
+                      className="block w-full bg-white text-[#0f3d28] text-center py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+                    >
+                      Contáctanos para suscribirte
+                    </a>
+                  </div>
+                </div>
+
+                <div className="text-center text-sm text-gray-500">
+                  <p>
+                    Para más información sobre nuestros planes, visita{' '}
+                    <a href="/" className="text-[#1ea34a] hover:underline">
+                      nuestra página principal
+                    </a>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
+  // Si tiene acceso premium, cargar convocatorias
+  useEffect(() => {
+    if (authState.tieneAccesoPremium) {
+      fetchConvocatorias();
+    }
+  }, [authState.tieneAccesoPremium]);
 
   useEffect(() => {
     if (convocatorias.length > 0) {
@@ -74,7 +208,12 @@ function Convocatorias() {
         if (response.status === 401) {
           localStorage.removeItem('authToken');
           localStorage.removeItem('username');
-          window.location.reload();
+          navigate('/login');
+          return;
+        }
+        if (response.status === 403) {
+          const data = await response.json();
+          setError(data.mensaje || 'Acceso denegado');
           return;
         }
         throw new Error('Error al cargar las convocatorias');
@@ -127,17 +266,10 @@ function Convocatorias() {
     return true;
   });
 
-  // Paginación
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = convocatoriasFiltradas.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(convocatoriasFiltradas.length / itemsPerPage);
-
-  const estadisticas = {
-    activas: convocatorias.filter(c => determinarEstado(c) === 'activa').length,
-    vencidas: convocatorias.filter(c => determinarEstado(c) === 'vencida').length,
-    sin_informacion: convocatorias.filter(c => determinarEstado(c) === 'sin_informacion').length
-  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -292,7 +424,7 @@ function Convocatorias() {
         {/* MODAL */}
         {selectedConvocatoria && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-3xl w-full p-6 overflow-y-auto">
+            <div className="bg-white rounded-xl max-w-3xl w-full p-6 overflow-y-auto max-h-[90vh]">
               <button
                 onClick={() => setSelectedConvocatoria(null)}
                 className="float-right"
@@ -304,8 +436,8 @@ function Convocatorias() {
               </h3>
               <p className="mb-4">{selectedConvocatoria.resumen}</p>
               {selectedConvocatoria.enlaces.split(',').map((l, i) => (
-                <a key={i} href={l} target="_blank" rel="noreferrer" className="text-[#1ea34a] block">
-                  <ExternalLink size={14} className="inline mr-1" /> {l}
+                <a key={i} href={l.trim()} target="_blank" rel="noreferrer" className="text-[#1ea34a] block">
+                  <ExternalLink size={14} className="inline mr-1" /> {l.trim()}
                 </a>
               ))}
             </div>
