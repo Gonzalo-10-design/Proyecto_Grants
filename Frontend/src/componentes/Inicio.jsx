@@ -1,11 +1,12 @@
 import { ArrowRight, Target, TrendingUp, Clock, Globe, CheckCircle, Search, RefreshCw, Folder, Lightbulb, Brain, FileText, Bell, ClipboardCheck, Workflow } from 'lucide-react';
+import UsarHoy from '../assets/imagenes/Usar_hoy.webp';
 
 export default function Inicio() {
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] text-white py-20 px-4">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] text-white pt-10 pb-20 px-4">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-[#1ea34a] rounded-full filter blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0f3d28] rounded-full filter blur-3xl"></div>
@@ -40,7 +41,7 @@ export default function Inicio() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 bg-white shadow-sm">
+      <section className="py-12 bg-[#e6f4ec] shadow-sm">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
@@ -69,6 +70,19 @@ export default function Inicio() {
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* Imagen destacada */}
+      <section className="py-16 px-4 bg-[#e6f4ec] shadow-sm">
+        <div className="max-w-6xl mx-auto flex justify-center">
+          <img
+            src={UsarHoy}
+            alt="Usar Grantia Hoy"
+            className="max-w-full md:max-w-4xl rounded-2xl shadow-xl
+                       transition-all duration-700 ease-out
+                       transform hover:scale-105 hover:-translate-y-2"
+          />
         </div>
       </section>
 

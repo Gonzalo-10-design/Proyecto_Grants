@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { User, Lock, Mail, LogIn, UserPlus } from 'lucide-react';
-import Grantia from '../assets/imagenes/Grantia.png';
+import Grantia from '../assets/imagenes/Grantia_1.webp';
 
-// dotenv → cargado automáticamente por Create React App
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+// dotenv → cargado automáticamente por Vite
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function Login({ onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);

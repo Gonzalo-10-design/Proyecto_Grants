@@ -4,8 +4,9 @@ import './index.css'
 import AppRouter from './router'
 import Login from './componentes/Login'
 
-// dotenv → cargado automáticamente por CRA
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+// dotenv → cargado automáticamente por Vite
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

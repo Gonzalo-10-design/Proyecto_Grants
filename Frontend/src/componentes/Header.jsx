@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { LogOut, User } from 'lucide-react';
-import Grantia from '../assets/imagenes/Grantia.png';
+import Grantia from '../assets/imagenes/Grantia_1.webp';
 
-// dotenv → cargado automáticamente por Create React App
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+// dotenv → cargado automáticamente por Vite
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 function Header() {
   const [username, setUsername] = useState('');
@@ -39,7 +40,7 @@ function Header() {
 
   return (
     <header className="w-full bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="max-w-7xl mx-auto px-5 py-4">
         <div className="flex justify-between items-center">
 
           {/* Logo y Título */}
@@ -99,7 +100,7 @@ function Header() {
 
             {/* Usuario */}
             <div className="flex items-center gap-4 pl-6 border-l-2 border-white border-opacity-30">
-              <div className="flex items-center gap-2 bg-white bg-opacity-10 px-4 py-2 rounded-lg backdrop-blur-sm">
+              <div className="flex items-center gap-2 bg-black bg-opacity-10 px-4 py-2 rounded-lg backdrop-blur-sm">
                 <User size={18} className="text-white" />
                 <span className="text-white font-medium text-sm">
                   {username}
