@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { LogOut, User, Menu, X } from 'lucide-react';
 import Grantia from '../assets/imagenes/Grantia_1.webp';
@@ -11,6 +11,12 @@ function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  /* ======================
+     EFECTOS
+  ====================== */
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
@@ -21,20 +27,38 @@ function Header() {
       setScrolled(window.scrollY > 20);
     };
 
-    // Escuchar evento personalizado para ocultar/mostrar header
     const handleHeaderVisibility = (event) => {
       setIsHidden(event.detail.hidden);
     };
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('toggleHeader', handleHeaderVisibility);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('toggleHeader', handleHeaderVisibility);
     };
   }, []);
 
+  /* ======================
+     HOME ACTION (LOGO)
+  ====================== */
+  const handleHomeAction = () => {
+    // Si no estamos en Inicio, navegar
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+
+    // Siempre volver arriba
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  /* ======================
+     LOGOUT
+  ====================== */
   const handleLogout = async () => {
     const token = localStorage.getItem('authToken');
 
@@ -55,22 +79,24 @@ function Header() {
   };
 
   return (
-    <header 
+    <header
       className={`w-full sticky top-0 transition-all duration-300 z-40 ${
         isHidden ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'
       } ${
-        scrolled 
-          ? 'bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] shadow-2xl' 
+        scrolled
+          ? 'bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] shadow-2xl'
           : 'bg-gradient-to-r from-[#0a2f1f] via-[#0f3d28] to-[#1ea34a] shadow-lg'
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 py-3">
         <div className="flex justify-between items-center">
 
-          {/* Logo y Título - Mejorado con animación */}
-          <NavLink 
-            to="/" 
-            className="flex items-center gap-3 group transition-transform duration-300 hover:scale-105"
+          {/* LOGO + TEXTO → HOME ACTION */}
+          <div
+            onClick={handleHomeAction}
+            role="button"
+            aria-label="Ir a inicio"
+            className="flex items-center gap-3 cursor-pointer group transition-transform duration-300 hover:scale-105"
           >
             <div className="relative">
               <img
@@ -78,14 +104,15 @@ function Header() {
                 alt="Grantia Logo"
                 className="w-14 h-14 rounded-lg shadow-md border-2 border-white transition-all duration-300 group-hover:shadow-xl group-hover:border-[#1ea34a]"
               />
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300" />
             </div>
+
             <h1 className="text-white text-2xl font-extrabold tracking-tight transition-colors duration-300 group-hover:text-gray-100">
               GRANTIA
             </h1>
-          </NavLink>
+          </div>
 
-          {/* Desktop Navigation */}
+          {/* DESKTOP NAV */}
           <div className="hidden md:flex items-center gap-6">
             <nav className="flex gap-5">
               <NavLink
@@ -97,7 +124,7 @@ function Header() {
                 }
               >
                 Cómo funciona
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full" />
               </NavLink>
 
               <NavLink
@@ -109,7 +136,7 @@ function Header() {
                 }
               >
                 Grants
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full" />
               </NavLink>
 
               <NavLink
@@ -121,11 +148,11 @@ function Header() {
                 }
               >
                 Contáctenos
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full" />
               </NavLink>
             </nav>
 
-            {/* Usuario con animación mejorada */}
+            {/* USUARIO */}
             <div className="flex items-center gap-3 pl-5 border-l border-white border-opacity-30">
               <div className="flex items-center gap-2 bg-white bg-opacity-15 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-300 hover:bg-opacity-20 hover:shadow-lg">
                 <div className="w-8 h-8 bg-[#1ea34a] rounded-full flex items-center justify-center shadow-md transition-transform duration-300 hover:scale-110">
@@ -146,7 +173,7 @@ function Header() {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* MOBILE BUTTON */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-white p-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300"
@@ -155,7 +182,7 @@ function Header() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* MOBILE MENU */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ${
             mobileMenuOpen ? 'max-h-96 mt-4' : 'max-h-0'
@@ -169,6 +196,7 @@ function Header() {
             >
               Cómo funciona
             </NavLink>
+
             <NavLink
               to="/convocatorias"
               onClick={() => setMobileMenuOpen(false)}
@@ -176,6 +204,7 @@ function Header() {
             >
               Grants
             </NavLink>
+
             <NavLink
               to="/contacto"
               onClick={() => setMobileMenuOpen(false)}
@@ -183,12 +212,12 @@ function Header() {
             >
               Contáctenos
             </NavLink>
-            
+
             <div className="flex items-center gap-2 px-4 py-2 bg-white bg-opacity-10 rounded-lg mt-2">
               <User size={16} className="text-white" />
               <span className="text-white text-sm">{username}</span>
             </div>
-            
+
             <button
               onClick={handleLogout}
               className="flex items-center justify-center gap-2 bg-red-600 text-white py-2 rounded-lg font-semibold hover:bg-red-700 transition-all duration-300"
