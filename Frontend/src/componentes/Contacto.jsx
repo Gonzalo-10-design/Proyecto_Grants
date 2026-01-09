@@ -32,10 +32,10 @@ export default function Contacto() {
                 <div>
                   <h3 className="font-semibold text-[#0f3d28] mb-1">Correo Electrónico</h3>
                   <a 
-                    href="mailto:info@eskar.com" 
+                    href="mailto:info@eskar.group" 
                     className="text-[#1ea34a] hover:text-[#0f3d28] transition-colors"
                   >
-                    info@eskar.com
+                    info@eskar.group
                   </a>
                 </div>
               </div>
